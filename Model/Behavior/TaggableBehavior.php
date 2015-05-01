@@ -62,7 +62,7 @@ class TaggableBehavior extends ModelBehavior {
 
 
 		if (!empty($tags)) {
-			foreach ($tag as $tagId) {
+			foreach ($tags as $tagId) {
 				$data['ModelsTag'][] = array(
 					'model_name' => $Model->name,
 					'tag_id' => $tagId,
