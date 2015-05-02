@@ -1,7 +1,27 @@
+.taggable-tag {
+  display: inline-block;
+  vertical-align: top;
+  background: #666;
+  border: 1px solid #666;
+  font-size: 11px;
+  line-height: 20px;
+  padding: 0 4px;
+  border-radius: 2px; }
+  .taggable-tag, .taggable-tag > a, .taggable-tag > a:hover {
+    color: #FFF; }
+
+.taggable-tags-list {
+  clear: both;
+  overflow: hidden;
+  margin-bottom: 10px; }
+  .taggable-tags-list-item {
+    margin-right: 4px; }
+
 .taggable-tags-input-checkboxes > label, .taggable-tags-input-checkboxes > .form-control {
   width: auto;
   display: inline-block;
   vertical-align: top;
+  border-radius: 2px;
   height: auto;
   font-size: 11px;
   line-height: 20px;

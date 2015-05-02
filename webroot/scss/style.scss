@@ -1,14 +1,51 @@
-$taggable-tags-input-checkbox-size:					11px;
-$taggable-tags-input-checkbox-height:				20px;
-$taggable-tags-input-checkbox-padding-horizontal:	4px;
+$tag-size:											11px;
+$tag-line-height:									20px;
+$tag-padding-horizontal:							4px;
+$tag-border-radius:									2px;
 
-$taggable-tags-input-checkbox-selected-bg:			#666;
-$taggable-tags-input-checkbox-selected-border:		#666;
-$taggable-tags-input-checkbox-selected-color:		#FFF;
+$tag-base-color:									#FFF;
+$tag-base-bg:										#666;
+$tag-base-border:									$tag-base-bg;
 
-$taggable-tags-input-checkbox-deselected-bg:		#FFF;
-$taggable-tags-input-checkbox-deselected-border:	#EEE;
-$taggable-tags-input-checkbox-deselected-color:		#CCC;
+$tag-empty-color:									#CCC;
+$tag-empty-bg:										#FFF;
+$tag-empty-border:									#EEE;
+
+.taggable-tag {
+	display: inline-block;
+	vertical-align: top;
+	&, > a, > a:hover {
+		color: $tag-base-color;
+	}
+	background: $tag-base-bg;
+	border: 1px solid $tag-base-border;
+	font-size: $tag-size;
+	line-height: $tag-line-height;
+	padding: 0 $tag-padding-horizontal;
+	border-radius: $tag-border-radius;
+}
+.taggable-tags-list {
+	clear: both;
+	overflow: hidden;
+	margin-bottom: 10px;
+
+	&-item {
+		margin-right: 4px;
+	}
+}
+
+
+$taggable-tags-input-checkbox-size:					$tag-size;
+$taggable-tags-input-checkbox-height:				$tag-line-height;
+$taggable-tags-input-checkbox-padding-horizontal:	$tag-padding-horizontal;
+
+$taggable-tags-input-checkbox-selected-bg:			$tag-base-bg;
+$taggable-tags-input-checkbox-selected-border:		$tag-base-border;
+$taggable-tags-input-checkbox-selected-color:		$tag-base-color;
+
+$taggable-tags-input-checkbox-deselected-bg:		$tag-empty-bg;
+$taggable-tags-input-checkbox-deselected-border:	$tag-empty-border;
+$taggable-tags-input-checkbox-deselected-color:		$tag-empty-color;
 
 .taggable-tags-input {
 	&-checkboxes {
@@ -16,6 +53,7 @@ $taggable-tags-input-checkbox-deselected-color:		#CCC;
 			width: auto;
 			display: inline-block;
 			vertical-align: top;
+			border-radius: $tag-border-radius;
 
 			height: auto;
 			font-size: $taggable-tags-input-checkbox-size;

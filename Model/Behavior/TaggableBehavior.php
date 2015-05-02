@@ -1,12 +1,9 @@
 <?php
+App::uses('ModelBehavior', 'Model');
+Configure::load('Taggable.config');
+
 class TaggableBehavior extends ModelBehavior {
 	public $name = 'Taggable';
-
-/**
- * The field to be saved
- * @var string
- **/
-	const SAVE_FIELD = 'new_tags';
 
 /**
  * The Tag model object
@@ -35,6 +32,7 @@ class TaggableBehavior extends ModelBehavior {
 	public function afterFind(Model $Model, $results, $primary = false) {
 		if (!empty($results[0][$Model->alias])) {
 			foreach ($results as $k => $row) {
+				$results[$k][$Model->alias]['taggable__tags'] = array();
 				if (!empty($row['Tag'])) {
 					// Adds an ID => TAG array to the model's result
 					foreach ($row['Tag'] as $tag) {
@@ -44,12 +42,13 @@ class TaggableBehavior extends ModelBehavior {
 			}
 			return $results;
 		}
-		debug($results);
 		return parent::afterFind($Model, $results, $primary);
 	}
 
 	public function beforeSave(Model $Model, $options = array()) {
 		$data =& $Model->data;
+		$saveField = Configure::read('Taggable.save_field');
+
 		$tags = array();
 		if (!empty($data['Tag']['Tag'])) {
 			foreach ($data['Tag']['Tag'] as $k => $tagId) {
@@ -62,8 +61,8 @@ class TaggableBehavior extends ModelBehavior {
 			}
 		}
 
-		if (!empty($data[$Model->alias][self::SAVE_FIELD])) {
-			$newTags = $this->translateTagStrToArray($data[$Model->alias][self::SAVE_FIELD]);
+		if (!empty($data[$Model->alias][$saveField])) {
+			$newTags = $this->translateTagStrToArray($data[$Model->alias][$saveField]);
 			if (empty($tags)) {
 				$tags = $newTags;
 			} else {
