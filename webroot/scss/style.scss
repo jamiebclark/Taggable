@@ -1,0 +1,35 @@
+$taggable-tags-input-checkbox-size:					11px;
+$taggable-tags-input-checkbox-height:				20px;
+$taggable-tags-input-checkbox-padding-horizontal:	4px;
+
+$taggable-tags-input-checkbox-selected-bg:			#666;
+$taggable-tags-input-checkbox-selected-border:		#666;
+$taggable-tags-input-checkbox-selected-color:		#FFF;
+
+$taggable-tags-input-checkbox-deselected-bg:		#FFF;
+$taggable-tags-input-checkbox-deselected-border:	#EEE;
+$taggable-tags-input-checkbox-deselected-color:		#CCC;
+
+.taggable-tags-input {
+	&-checkboxes {
+		> label, > .form-control {
+			width: auto;
+			display: inline-block;
+			vertical-align: top;
+
+			height: auto;
+			font-size: $taggable-tags-input-checkbox-size;
+			line-height: $taggable-tags-input-checkbox-height;
+			padding: 0 $taggable-tags-input-checkbox-padding-horizontal;
+
+			color: $taggable-tags-input-checkbox-deselected-color;
+			background: $taggable-tags-input-checkbox-deselected-bg;
+			border: 1px solid $taggable-tags-input-checkbox-deselected-border;
+			&.selected {
+				color: $taggable-tags-input-checkbox-selected-color;
+				background: $taggable-tags-input-checkbox-selected-bg;
+				border-color: $taggable-tags-input-checkbox-selected-border;
+			}
+		}
+	}
+}

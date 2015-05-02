@@ -5,4 +5,6 @@ class ModelsTag extends TaggableAppModel {
 	public $hasMany = array(
 		'Taggable.Tag'
 	);
+
+	public $recursive = -1;
 }

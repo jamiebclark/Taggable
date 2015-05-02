@@ -14,6 +14,9 @@ class TaggableBehavior extends ModelBehavior {
  **/
 	protected $Tag;
 	
+	protected $saveTagIds = array();
+
+
 	public function setup(Model $Model, $settings = array()) {
 		$this->Tag = ClassRegistry::init('Taggable.Tag');
 		$this->bindModel($Model);
@@ -30,6 +33,18 @@ class TaggableBehavior extends ModelBehavior {
 	}
 
 	public function afterFind(Model $Model, $results, $primary = false) {
+		if (!empty($results[0][$Model->alias])) {
+			foreach ($results as $k => $row) {
+				if (!empty($row['Tag'])) {
+					// Adds an ID => TAG array to the model's result
+					foreach ($row['Tag'] as $tag) {
+						$results[$k][$Model->alias]['taggable__tags'][$tag['id']] = $tag['tag'];
+					}
+				}
+			}
+			return $results;
+		}
+		debug($results);
 		return parent::afterFind($Model, $results, $primary);
 	}
 
@@ -59,20 +74,64 @@ class TaggableBehavior extends ModelBehavior {
 				$tags = array_keys(array_flip($tags));
 			}
 		}
-
-
-		if (!empty($tags)) {
-			foreach ($tags as $tagId) {
-				$data['ModelsTag'][] = array(
-					'model_name' => $Model->name,
-					'tag_id' => $tagId,
-				);
-			}
-		}
+		$this->saveTagIds[$Model->alias] = $tags;
 
 		return true;
 	}
+
+	public function afterSave(Model $Model, $created, $options = array()) {
+		$id = $Model->id;
+		if (!empty($this->saveTagIds[$Model->alias])) {
+			$this->saveTagIds($Model, $id, $this->saveTagIds[$Model->alias]);
+			$this->saveTagIds[$Model->alias] = array();
+		}
+		return parent::afterSave($Model, $created, $options);
+	}
 	
+	protected function saveTagIds(Model $Model, $id, $tagIds = array()) {
+		$ModelsTag = CLassRegistry::init('Taggable.ModelsTag');
+
+		debug(array(
+			'fields' => array(
+				$ModelsTag->escapeField('tag_id'),
+				$ModelsTag->escapeField('id'),
+			),
+			'conditions' => array(
+				'ModelsTag.model_name' => $Model->name,
+				'ModelsTag.model_id' => $id,
+			)
+		));
+		$modelTags = $ModelsTag->find('all', array(
+			'fields' => array(
+				$ModelsTag->escapeField('tag_id'),
+				$ModelsTag->escapeField('id'),
+			),
+			'conditions' => array(
+				'ModelsTag.model_name' => $Model->name,
+				'ModelsTag.model_id' => $id,
+			)
+		));
+		$modelTagIds = Hash::combine($modelTags, '{n}.ModelsTag.tag_id', '{n}.ModelsTag.id');
+
+		$data = array();
+		foreach ($tagIds as $tagId) {
+			$data[] = array(
+				'id' => !empty($modelTagIds[$tagId]) ? $modelTagIds[$tagId] : null,
+				'model_name' => $Model->name,
+				'model_id' => $id,
+				'tag_id' => $tagId
+			);
+			unset($modelTagIds[$tagId]);
+		}
+		if (!empty($modelTagIds)) {
+			$ModelsTag->deleteAll(array('ModelsTag.id' => $modelTagIds));
+		}
+		if (!empty($data)) {
+			$ModelsTag->saveAll($data, array('callbacks' => false));
+		}
+		return count($data);
+	}
+
 /**
  * Filters an existing query by a set of tags
  *
@@ -149,7 +208,7 @@ class TaggableBehavior extends ModelBehavior {
 			if ($i > 0) {
 				$return .= ', ';
 			}
-			$return .= $tags[$i];
+			$return .= is_array($tags[$i]) ? $tags[$i]['tag'] : $tags[$i];
 		}
 		return $return;
 	}
@@ -211,30 +270,39 @@ class TaggableBehavior extends ModelBehavior {
 	protected function bindModel(Model $Model) {
 		$Model->bindModel(array(
 			'hasAndBelongsToMany' => array(
-				$this->Tag->alias => array(
-					'className' => $this->Tag->name,
+				'Tag' => array(
+					'className' => 'Taggable.Tag',
 					'with' => 'ModelsTag',
 					'foreignKey' => 'model_id',
 					'associationForeignKey' => 'tag_id',
 					'conditions' => array(
-						'ModelsTag.model_name' => $Model->alias,
+						'ModelsTag.model_name' => $Model->name,
 					)
 				)
-			)
+			),
+			'hasMany' => array(
+				'ModelsTag' => array(
+					'className' => 'Taggable.ModelsTag',
+					'foreignKey' => 'model_id',
+					'conditions' => array(
+						'ModelsTag.model_name' => $Model->name,
+					)
+				)
+			),
 		), false);
 		$this->Tag->bindModel(array(
 			'hasAndBelongsToMany' => array(
-				$Model->alias => array(
+				$Model->name => array(
 					'className' => $Model->name,
 					'with' => 'ModelsTag',
 					'foreignKey' => 'tag_id',
 					'associationForeignKey' => 'model_id',
 					'conditions' => array(
-						'ModelsTag.model_name' => $Model->alias,
+						'ModelsTag.model_name' => $Model->name,
 					)
 				)
 			)
-		));
+		), false);
 	}
 
 /**

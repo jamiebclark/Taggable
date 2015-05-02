@@ -1,0 +1,17 @@
+.taggable-tags-input-checkboxes > label, .taggable-tags-input-checkboxes > .form-control {
+  width: auto;
+  display: inline-block;
+  vertical-align: top;
+  height: auto;
+  font-size: 11px;
+  line-height: 20px;
+  padding: 0 4px;
+  color: #CCC;
+  background: #FFF;
+  border: 1px solid #EEE; }
+  .taggable-tags-input-checkboxes > label.selected, .taggable-tags-input-checkboxes > .form-control.selected {
+    color: #FFF;
+    background: #666;
+    border-color: #666; }
+
+/*# sourceMappingURL=style.css.map */

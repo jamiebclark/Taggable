@@ -3,6 +3,13 @@ App::uses('TaggableAppModel', 'Taggable.Model');
 class Tag extends TaggableAppModel {
 	public $name = 'Tag';
 	public $displayField = 'tag';
+
+	public $hasMany = array(
+		'ModelsTag' => array(
+			'className' => 'Tag.ModelsTag',
+			'foreignKey' => 'tag_id',
+		),
+	);
 	
 	public $recursive = -1;
 	
