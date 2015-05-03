@@ -24,7 +24,7 @@ class TaggableBehavior extends ModelBehavior {
 		if (!empty($query['tags'])) {
 			$tags = $query['tags'];
 			unset($query['tags']);
-			$query = $this->filterTagQuery($Model, $query, $query['tags']);
+			$query = $this->filterTagQuery($Model, $query, $tags);
 		}
 		return $query;
 	}
@@ -134,12 +134,12 @@ class TaggableBehavior extends ModelBehavior {
 			if (!is_array($tags)) {
 				$tags = $this->translateTagStrToArray($tags);
 			}
-			foreach ($tags as $k => $tagId) {
+			foreach ($tags as $k => $tag) {
 				$joinAlias = 'TagFilterJoin' . $k;
 				$tagAlias = 'TagFilter' . $k;
 				$type = 'INNER';
 				$conditions = array(
-					$this->Tag->escapeField(null, $tagAlias) => $tagId
+					$this->Tag->escapeField($this->Tag->displayField, $tagAlias) => $tag
 				);
 				$query = $this->joinTags($Model, $query, compact('joinAlias', 'tagAlias', 'conditions', 'type'));
 			}

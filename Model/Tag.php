@@ -6,7 +6,7 @@ class Tag extends TaggableAppModel {
 
 	public $hasMany = array(
 		'ModelsTag' => array(
-			'className' => 'Tag.ModelsTag',
+			'className' => 'Taggable.ModelsTag',
 			'foreignKey' => 'tag_id',
 		),
 	);
