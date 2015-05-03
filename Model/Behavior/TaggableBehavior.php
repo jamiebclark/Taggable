@@ -89,17 +89,6 @@ class TaggableBehavior extends ModelBehavior {
 	
 	protected function saveTagIds(Model $Model, $id, $tagIds = array()) {
 		$ModelsTag = CLassRegistry::init('Taggable.ModelsTag');
-
-		debug(array(
-			'fields' => array(
-				$ModelsTag->escapeField('tag_id'),
-				$ModelsTag->escapeField('id'),
-			),
-			'conditions' => array(
-				'ModelsTag.model_name' => $Model->name,
-				'ModelsTag.model_id' => $id,
-			)
-		));
 		$modelTags = $ModelsTag->find('all', array(
 			'fields' => array(
 				$ModelsTag->escapeField('tag_id'),
