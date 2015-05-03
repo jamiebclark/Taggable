@@ -31,12 +31,13 @@ class TaggableBehavior extends ModelBehavior {
 
 	public function afterFind(Model $Model, $results, $primary = false) {
 		if (!empty($results[0][$Model->alias])) {
+			$resultField = Configure::read('Taggable.resultField');
 			foreach ($results as $k => $row) {
-				$results[$k][$Model->alias]['taggable__tags'] = array();
+				$results[$k][$Model->alias][$resultField] = array();
 				if (!empty($row['Tag'])) {
 					// Adds an ID => TAG array to the model's result
 					foreach ($row['Tag'] as $tag) {
-						$results[$k][$Model->alias]['taggable__tags'][$tag['id']] = $tag['tag'];
+						$results[$k][$Model->alias][$resultField][$tag['id']] = $tag['tag'];
 					}
 				}
 			}
@@ -47,7 +48,7 @@ class TaggableBehavior extends ModelBehavior {
 
 	public function beforeSave(Model $Model, $options = array()) {
 		$data =& $Model->data;
-		$saveField = Configure::read('Taggable.save_field');
+		$saveField = Configure::read('Taggable.saveField');
 
 		$tags = array();
 		if (!empty($data['Tag']['Tag'])) {
