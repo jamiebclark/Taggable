@@ -1,5 +1,7 @@
 <?php
 App::uses('Component', 'Controller');
+App::uses('Utility', 'Inflector');
+
 class TaggableComponent extends Component {
 	public $name = 'Taggable';
 
@@ -23,6 +25,9 @@ class TaggableComponent extends Component {
 		$tags = array();
 		if (!empty($this->request->named['tag'])) {
 			$tags = array($this->request->named['tag']);
+			foreach ($tags as $k => $tag) {
+				$tags[$k] = Inflector::humanize($tag);
+			}
 			$query['tags'] = $tags;
 		}
 		$this->controller->set(array('taggableTags' => $tags));
